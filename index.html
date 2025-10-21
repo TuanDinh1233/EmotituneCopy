@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmotiTunes - How are you feeling?</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(-45deg, #6a3093, #a044ff, #7b52ab, #553c8b);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .emotion-form {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            color: #6a3093;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .emotion-options {
+            display: grid;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .emotion-button {
+            background: linear-gradient(45deg, #6a3093, #a044ff);
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .emotion-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(106, 48, 147, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="emotion-form">
+        <h1>How are you feeling today?</h1>
+        <div class="emotion-options">
+            <button class="emotion-button" data-emotion="happy">😊 Happy</button>
+            <button class="emotion-button" data-emotion="sad">😢 Sad</button>
+            <button class="emotion-button" data-emotion="energetic">⚡ Energetic</button>
+            <button class="emotion-button" data-emotion="calm">😌 Calm</button>
+            <button class="emotion-button" data-emotion="angry">😠 Angry</button>
+        </div>
+    </div>
+    <script>
+        // Array to store emotion selections
+        const emotionHistory = [];
+
+        // Add click event listeners to all emotion buttons
+        document.querySelectorAll('.emotion-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const emotion = this.getAttribute('data-emotion');
+                const timestamp = new Date().toISOString();
+                
+                // Store the selection
+                emotionHistory.push({
+                    emotion: emotion,
+                    timestamp: timestamp
+                });
+
+                // Log the selection (you can modify this to store data differently)
+                console.log('Emotion selected:', emotion);
+                console.log('Emotion history:', emotionHistory);
+                
+                // Add visual feedback
+                this.style.backgroundColor = '#553c8b';
+                setTimeout(() => {
+                    this.style.backgroundColor = '';
+                }, 300);
+            });
+        });
+    </script>
+</body>
+</html></form>

@@ -27,6 +27,13 @@ function displayQuestion() {
         button.addEventListener('click', () => handleResponse(choice));
         choicesContainer.appendChild(button);
     });
+
+    // Add Skip button
+    const button = document.createElement('button');
+    button.className = 'emotion-button';
+    button.textContent = "Skip";
+    button.addEventListener('click', () => handleResponse("Skip"));
+    choicesContainer.appendChild(button);
 }
 
 // Function to handle user response

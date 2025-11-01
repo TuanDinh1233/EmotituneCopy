@@ -16,8 +16,8 @@
                 <input type="text" id="fontInput" placeholder="Enter font name">
                 <button onclick="applyFont()">Apply Font</button>
             </div>
-            <div><button onclick="settingA()">Adjust Quiz Preferences</button></div>
-            <div><button onclick="settingB()">Adjust Song Preferences</button></div>
+            <div><a href = "quiz-preferences.html">Adjust Quiz Preferences</a></div>
+            <div><a href = "song-preferences.html">Adjust Song Preferences</a></div>
             <div><a href="dashboard.html">Go Back</a></div>
         </div>
     </div>
@@ -26,16 +26,6 @@
         function applyFont() {
             const fontInput = document.getElementById('fontInput').value;
             document.body.style.fontFamily = fontInput;
-        }
-
-        function settingA() {
-            console.log("Setting A clicked");
-            // Add functionality for setting A
-        }
-
-        function settingB() {
-            console.log("Setting B clicked");
-            // Add functionality for setting B
         }
     </script>
 </body>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Quiz Preferences</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Quiz Preferences</h1>
+        <form id="quiz-form">
+            <div class="question">
+                <label for="question1">Question 1:</label>
+                <select id="question1" name="question1">
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                </select>
+            </div>
+            <div class="question">
+                <label for="question2">Question 2:</label>
+                <select id="question2" name="question2">
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                </select>
+            </div>
+            <!-- Add more questions as needed -->
+            <div class="buttons">
+                <button type="button" onclick="window.location.href='settings.html'">Cancel</button>
+                <button type="button" onclick="submitAndGo()">Apply</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        // Handler for the Apply button — process form if needed, then return to settings
+        function submitAndGo() {
+            // TODO: add any validation or saving logic here if needed
+            window.location.href = 'settings.html';
+        }
+    </script>
+</body>
+</html>

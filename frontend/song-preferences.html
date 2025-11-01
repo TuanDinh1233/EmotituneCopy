@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Quiz Preferences</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Song Preferences</h1>
+
+        <div id="song-list-container">
+            <div id="song-sections">
+                <div class="song-section">
+                    <h2>Liked Songs</h2>
+                    <div class="song-list" id="likedList"></div>
+                </div>
+
+                <div class="song-section">
+                    <h2>Disliked Songs</h2>
+                    <div class="song-list" id="dislikedList"></div>
+                </div>
+            </div>
+
+            <div class="song-actions-note">Use the arrows to reorder songs, the trash icon to remove a song, or the ↔ button to move it between sections.</div>
+
+            <div style="margin-top:1rem; display:flex; gap:0.75rem; justify-content:flex-end;">
+                <button class="dashboard-button" onclick="window.location.href='settings.html'">Cancel</button>
+                <button class="dashboard-button" onclick="saveAndReturn()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample song lists — liked and disliked
+        let likedSongs = [
+            { title: 'Blinding Lights', artist: 'The Weeknd' },
+            { title: 'Levitating', artist: 'Dua Lipa' }
+        ];
+
+        let dislikedSongs = [
+            { title: 'Save Your Tears', artist: 'The Weeknd' },
+            { title: 'Kiss Me More', artist: 'Doja Cat feat. SZA' }
+        ];
+
+        const likedListEl = document.getElementById('likedList');
+        const dislikedListEl = document.getElementById('dislikedList');
+
+        function renderLists() {
+            likedListEl.innerHTML = '';
+            dislikedListEl.innerHTML = '';
+
+            likedSongs.forEach((song, idx) => {
+                likedListEl.appendChild(createSongCell(song, 'liked', idx));
+            });
+
+            dislikedSongs.forEach((song, idx) => {
+                dislikedListEl.appendChild(createSongCell(song, 'disliked', idx));
+            });
+        }
+
+        function createSongCell(song, listName, idx) {
+            const cell = document.createElement('div');
+            cell.className = 'song-cell';
+
+            const img = document.createElement('img');
+            img.src = 'src/logos/spotify.png';
+            img.alt = 'spotify';
+
+            const meta = document.createElement('div');
+            meta.className = 'song-meta';
+            const title = document.createElement('span');
+            title.className = 'song-title';
+            title.textContent = song.title;
+            const artist = document.createElement('span');
+            artist.className = 'song-artist';
+            artist.textContent = song.artist;
+
+            meta.appendChild(title);
+            meta.appendChild(document.createTextNode(' - '));
+            meta.appendChild(artist);
+
+            const actions = document.createElement('div');
+            actions.className = 'cell-actions';
+
+            // Move between lists button
+            const moveBtn = document.createElement('button');
+            moveBtn.className = 'icon-button';
+            moveBtn.title = listName === 'liked' ? 'Move to Disliked' : 'Move to Liked';
+            moveBtn.innerText = '⇄';
+            moveBtn.addEventListener('click', () => toggleMove(listName, idx));
+
+            // Trash button
+            const trashBtn = document.createElement('button');
+            trashBtn.className = 'icon-button';
+            trashBtn.title = 'Remove';
+            trashBtn.innerText = '🗑️';
+            trashBtn.addEventListener('click', () => removeAt(listName, idx));
+
+            actions.appendChild(moveBtn);
+            actions.appendChild(trashBtn);
+
+            cell.appendChild(img);
+            cell.appendChild(meta);
+            cell.appendChild(actions);
+
+            return cell;
+        }
+
+        function moveInList(listName, idx, delta) {
+            const arr = listName === 'liked' ? likedSongs : dislikedSongs;
+            const newIndex = idx + delta;
+            if (newIndex < 0 || newIndex >= arr.length) return;
+            const tmp = arr[newIndex];
+            arr[newIndex] = arr[idx];
+            arr[idx] = tmp;
+            renderLists();
+        }
+
+        function toggleMove(listName, idx) {
+            if (listName === 'liked') {
+                const [item] = likedSongs.splice(idx, 1);
+                dislikedSongs.push(item);
+            } else {
+                const [item] = dislikedSongs.splice(idx, 1);
+                likedSongs.push(item);
+            }
+            renderLists();
+        }
+
+        function removeAt(listName, idx) {
+            if (listName === 'liked') likedSongs.splice(idx, 1);
+            else dislikedSongs.splice(idx, 1);
+            renderLists();
+        }
+
+        function saveAndReturn() {
+            // TODO: persist likedSongs / dislikedSongs to your app state/localStorage/server
+            // For now, just navigate back to settings
+            window.location.href = 'settings.html';
+        }
+
+        // initial render
+        renderLists();
+    </script>
+</body>
+</html></select>

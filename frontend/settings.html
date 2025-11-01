@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmotiTunes Settings</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Settings</h1>
+        
+        <div class="settings-group">
+            <div>
+                <label for="fontInput">Text Font:</label>
+                <input type="text" id="fontInput" placeholder="Enter font name">
+                <button onclick="applyFont()">Apply Font</button>
+            </div>
+            <div><button onclick="settingA()">Adjust Quiz Preferences</button></div>
+            <div><button onclick="settingB()">Adjust Song Preferences</button></div>
+            <div><a href="dashboard.html">Go Back</a></div>
+        </div>
+    </div>
+
+    <script>
+        function applyFont() {
+            const fontInput = document.getElementById('fontInput').value;
+            document.body.style.fontFamily = fontInput;
+        }
+
+        function settingA() {
+            console.log("Setting A clicked");
+            // Add functionality for setting A
+        }
+
+        function settingB() {
+            console.log("Setting B clicked");
+            // Add functionality for setting B
+        }
+    </script>
+</body>
+</html>

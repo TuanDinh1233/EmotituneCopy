@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Results — EmotiTunes</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+
+        <div><h1>Welcome to the dashboard!</h1></div>
+
+        <!--Table-->
+        <div id = "dashboard-main-table">
+            <!--1st col (Image, playlist)-->
+            <div>
+                <img src = "src/gifs/forest1.gif" alt="forest gif" width="600" height="400">
+                <!--Make playlist here!-->
+                <h2>Your Recommended Playlist</h2>
+                <div id="playlist-container"></div>
+            </div>
+
+            <!--2nd col buttons-->
+            <div id="dashboard-buttons">
+                <a class = "dashboard-button">Settings button</a>
+                <a class = "dashboard-button">Mood Change button</a>
+            </div>
+        </div>
+
+        <!--Separate row-->
+        <div><a class = "dashboard-button">Export Playlist</a></div>
+
+        <!--Stores the script for this page-->
+        <script src="dashboard.js"></script>
+    </body>
+</html>

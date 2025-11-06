@@ -6,48 +6,36 @@ export function QuizQuestion (question, choices){
 
 export const questions = [
     new QuizQuestion("How are you feeling today?", 
-        ["Happy", "Sad", "Angry", "Relaxed", "Excited", "Anxious"]
+        ["Happy", "Sad", "Angry", "Relaxed", "Excited", "Anxious", "Nostalgic"]
     ),
-    new QuizQuestion("What genre of music do you prefer when you're happy?", 
-        ["Pop", "Rock", "Classical", "Jazz", "Hip-Hop", "Country"]
+    new QuizQuestion("Do you want your playlist to match your current mood or change it?", 
+        ["Match My Mood", "Change My Mood", "Surprise Me"]
     ),
-    new QuizQuestion("What genre of music do you prefer when you're sad?", 
-        ["Blues", "Classical", "Acoustic", "Indie", "R&B", "Folk"]
+    new QuizQuestion("What kind of energy do you want your playlist to have?", 
+        ["Chill", "Balanced", "Upbeat", "High-Energy", "Varied"]
     ),
-    new QuizQuestion("What genre of music do you prefer when you're angry?", 
-        ["Rock", "Metal", "Punk", "Hip-Hop", "Electronic", "Hardcore"]
+    new QuizQuestion("Which genres best fit your music taste?", 
+        ["Pop", "Rock", "Jazz", "Classical", "Hip-Hop", "Electronic", "Folk", "R&B", "Indie"]
     ),
-    new QuizQuestion("What genre of music do you prefer when you're relaxed?", 
-        ["Classical", "Ambient", "Jazz", "Acoustic", "Chillout", "Soft Rock"]
+    new QuizQuestion("Where will you be listening?", 
+        ["At Home", "Studying", "Commuting", "Exercising", "Working", "Socializing"]
     ),
-    new QuizQuestion("What genre of music do you prefer when you're excited?", 
-        ["Pop", "Dance", "Electronic", "Rock", "Hip-Hop", "Upbeat Indie"]
+    new QuizQuestion("What kind of music do you want more of?", 
+        ["New Artists", "Familiar Favorites", "A Mix of Both"]
     ),
-    new QuizQuestion("What genre of music do you prefer when you're anxious?", 
-        ["Classical", "Ambient", "Acoustic", "Soft Rock", "Jazz", "Meditative"]
+    new QuizQuestion("Do you prefer music with lyrics or mostly instrumental?", 
+        ["Lyrics", "Instrumental", "No Preference"]
     ),
-    new QuizQuestion("What genre of music do you prefer when you're feeling nostalgic?", 
-        ["Classic Rock", "Oldies", "Folk", "Singer-Songwriter", "Blues", "Jazz"]
+    new QuizQuestion("How important are lyrics to your mood?", 
+        ["Very Important", "Somewhat Important", "Not Important"]
     ),
-    new QuizQuestion("What tempo of music do you prefer?", 
-        ["Slow", "Medium", "Fast", "Varied", "Depends on Mood"]
+    new QuizQuestion("Would you like to include ambient sounds (like rain or waves)?", 
+        ["Yes, please", "No, just music"]
     ),
-    new QuizQuestion("What genre do you prefer in general", 
-        ["Pop", "Rock", "Jazz", "Classical", "Hip-Hop", "Electronic"]
-    ),
-    new QuizQuestion("Do you want to be recommended new artists or familiar ones?", 
-        ["New", "Familiar", "A Mix of Both"]
-    ),
-    new QuizQuestion("What cultural music influences do you enjoy?", 
-        ["African", "Asian", "Latin", "Middle Eastern", "Western", "Indigenous"]
-    ),
-    new QuizQuestion("What musical eras do you prefer?", 
-        ["Baroque", "Classical", "Romantic", "20th Century", "Contemporary"]
-    ),
-    new QuizQuestion("What instrumentation do you prefer?", 
-        ["Strings", "Brass", "Woodwinds", "Percussion", "Electronic", "Vocals"]
+    new QuizQuestion("Do you enjoy music influenced by specific cultures?", 
+        ["Latin", "African", "Asian", "Western", "Middle Eastern", "No Preference"]
     )
-];  
+];
 
 export function QuizResponse (question, response){
     this.Question = question;

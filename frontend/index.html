@@ -5,43 +5,170 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EmotiTunes - How are you feeling?</title>
     <link rel="stylesheet" href="style.css">
+
+
     <script type="module">
         import { questions, QuizResponse } from './questions.js';
-        
-        // Initialize variables
-        let currentQuestionIndex = 0;
-        let questionResponses = [];
-        let currentQuestion = null;
 
-        // Function to display a question
+    // Initialize variables
+    let currentQuestionIndex = 0;
+    let questionResponses = [];
+    let currentQuestion = null;
+    let selectedChoice = null; // stores currently selected choice value
+
+    // choicesContainer will be initialized after DOMContentLoaded
+    let choicesContainer = null;
+
+        // Function to display a questions
         function displayQuestion() {
+            selectedChoice = null;
             currentQuestion = questions[currentQuestionIndex];
             document.getElementById('questionText').textContent = currentQuestion.Question;
-            
-            // Update the counter
+
+            // Update the counter (number of answered + 1)
             document.getElementById('currentQuestion').textContent = questionResponses.length + 1;
-            
+
             // Clear and populate choices
-            const choicesContainer = document.getElementById('choicesContainer');
             choicesContainer.innerHTML = '';
-            
+
+            // Displays each choice as a button
             currentQuestion.Choices.forEach(choice => {
                 const button = document.createElement('button');
                 button.className = 'emotion-button';
+                button.type = 'button';
+                button.dataset.choice = choice;
                 button.textContent = choice;
-                button.addEventListener('click', () => handleResponse(choice));
+                button.addEventListener('click', () => selectChoice(button));
                 choicesContainer.appendChild(button);
             });
+
+            // Add the "Other" option with inline textbox
+            const otherBtn = document.createElement('button');
+            otherBtn.className = 'emotion-button';
+            otherBtn.type = 'button';
+            otherBtn.dataset.choice = '__other__';
+            otherBtn.textContent = 'Other';
+            otherBtn.addEventListener('click', () => selectChoice(otherBtn));
+
+            const otherInput = document.createElement('input');
+            otherInput.type = 'text';
+            otherInput.placeholder = 'Type your answer...';
+            otherInput.style.borderRadius = '8px';
+            otherInput.style.border = '1px solid #ddd';
+            otherInput.addEventListener('input', () => {
+                if (otherBtn.classList.contains('selected')) {
+                    selectedChoice = otherInput.value;
+                    updateSubmitState();
+                }
+            });
+            otherBtn.appendChild(otherInput);
+
+            choicesContainer.appendChild(otherBtn);
+
+            //Add submit container for submit button and skip button
+            const submitContainer = document.createElement('div');
+            submitContainer.style.display = 'flex';
+            submitContainer.style.gap = '8px';
+            submitContainer.style.justifyItems = 'center';
+            submitContainer.style.flexDirection = 'row';
+
+            // Add Skip option as a selectable choice
+            const skipBtn = document.createElement('button');
+            skipBtn.className = 'skip-button';
+            skipBtn.type = 'button';
+            // store a simple 'skipped' response label
+            skipBtn.dataset.choice = 'skipped';
+            skipBtn.textContent = 'Skip';
+            skipBtn.style.flexGrow = '1';
+            skipBtn.addEventListener('click', () => {
+                selectChoice(skipBtn);
+                submitAnswer();
+            });
+            submitContainer.appendChild(skipBtn);
+
+            //Creates submit button
+            const submitBtn = document.createElement('button');
+            submitBtn.id = 'submitAnswer';
+            submitBtn.className = 'submit-button';
+            submitBtn.type = 'button';
+            submitBtn.textContent = 'Submit';
+            submitBtn.style.flexGrow = '1';
+            submitBtn.addEventListener('click', submitAnswer);
+            submitContainer.appendChild(submitBtn);
+
+            choicesContainer.appendChild(submitContainer);
+
+            // Save references for enabling/disabling input when Other selected
+            choicesContainer._otherBtn = otherBtn;
+            choicesContainer._otherInput = otherInput;
+
+            // Reset submit button
+            updateSubmitState();
         }
 
-        // Function to handle user response
-        function handleResponse(choice) {
-            const response = new QuizResponse(currentQuestion, choice);
-            questionResponses.push(response);
+        function selectChoice(buttonEl) {
+            // Deselect all choice buttons
+            choicesContainer.querySelectorAll('.emotion-button').forEach(b => b.classList.remove('selected'));
+            // Select the clicked button
+            buttonEl.classList.add('selected');
 
-            // Check if we've reached 10 questions
-            if (questionResponses.length === 10) {
-                document.getElementById('continuePrompt').style.display = 'block';
+            // Handle Other input enabling
+            const otherBtn = choicesContainer._otherBtn;
+            const otherInput = choicesContainer._otherInput;
+            if (buttonEl === otherBtn) {
+                otherInput.disabled = false;
+                otherInput.focus();
+                selectedChoice = otherInput.value || '';
+            } else {
+                // For skip, use special token; otherwise use button dataset
+                selectedChoice = buttonEl.dataset.choice;
+            }
+
+            updateSubmitState();
+        }
+
+        function updateSubmitState() {
+            const submitBtn = document.getElementById('submitAnswer');
+            if (!submitBtn) return;
+            // Only enable submit when a choice is selected and, if Other selected, the textbox is non-empty
+            if (selectedChoice === null) {
+                submitBtn.disabled = true;
+                return;
+            }
+            if (selectedChoice === '__other__' || choicesContainer.querySelector('.emotion-button.selected')?.dataset.choice === '__other__') {
+                const otherVal = choicesContainer._otherInput?.value?.trim();
+                submitBtn.disabled = !otherVal;
+            } else {
+                // selectedChoice may be the dataset value or the actual typed value (for other)
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Function to handle submit
+        function submitAnswer() {
+            let answerValue;
+            const selectedBtn = choicesContainer.querySelector('.emotion-button.selected');
+            if (!selectedBtn) return; // should not happen due to disabled state
+
+            if (selectedBtn.dataset.choice === '__other__') {
+                answerValue = choicesContainer._otherInput.value.trim();
+            } else if (selectedBtn.dataset.choice === 'skipped') {
+                answerValue = 'skipped';
+            } else {
+                answerValue = selectedBtn.dataset.choice;
+            }
+
+            // Create and store response
+            const response = new QuizResponse(currentQuestion, answerValue);
+            questionResponses.push(response);
+            console.log('Recorded response:', response);
+
+            // Visual feedback — briefly mark selected
+            selectedBtn.classList.add('selected');
+
+            // Check if we've reached the maximum number of questions
+            if (questionResponses.length === questions.length) {
+                window.finishQuestions();
             } else {
                 moveToNextQuestion();
             }
@@ -53,11 +180,8 @@
             displayQuestion();
         }
 
-        // Function to continue after 10 questions
-        window.continueQuestions = function() {
-            document.getElementById('continuePrompt').style.display = 'none';
-            moveToNextQuestion();
-        };
+        // expose submit to window for button onclick
+        window.submitAnswer = submitAnswer;
 
         // Function to finish the questionnaire
         window.finishQuestions = function() {
@@ -71,7 +195,11 @@
         alert("Welcome to Emotitunes! \nThis website will ask you a series of questions about your music preferences and emotions. \n\nYou'll need to answer at least 10 questions, and then you can choose to continue or finish. \n\nYour responses will help us understand your preferences better. \n\nEnjoy your musical journey with EmotiTunes!");
 
         // Display the first question when the page loads
-        displayQuestion();
+        // Initialize choicesContainer after DOM ready and then render
+        window.addEventListener('DOMContentLoaded', () => {
+            choicesContainer = document.getElementById('choicesContainer');
+            displayQuestion();
+        });
     </script>
 </head>
 <body>
@@ -80,12 +208,6 @@
         <h1 id="questionText"></h1>
         <div class="emotion-options" id="choicesContainer">
         </div>
-    </div>
-    <div class="continue-prompt" id="continuePrompt">
-        <h2>You've completed 10 questions!</h2>
-        <p>Would you like to continue answering more questions?</p>
-        <button class="yes" onclick="continueQuestions()">Yes, continue</button>
-        <button class="no" onclick="finishQuestions()">No, I'm done</button>
     </div>
 </body>
 </html>

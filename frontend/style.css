@@ -338,6 +338,7 @@ h1 {
     display: grid;
     gap: 15px;
     margin: 20px 0;
+    width: 100%;
 }
 
 .emotion-button {
@@ -357,7 +358,44 @@ h1 {
 
 .emotion-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(106, 48, 147, 0.3);
+    box-shadow: 0 8px 15px rgba(106, 48, 147, 0.3);
+}
+
+/* Selected state for emotion/choice buttons */
+.emotion-button.selected {
+    outline: 7px solid rgba(106,48,147,0.5);
+    box-shadow: 0 6px 18px rgba(106,48,147,0.75);
+    transform: translateY(-4px);
+}
+
+.skip-button {
+    background: linear-gradient(45deg, #933030, #ff4444);
+    border: none;
+    padding: 15px 25px;
+    border-radius: 8px;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.submit-button {
+    background: linear-gradient(45deg, #30933d, #5aff44);
+    border: none;
+    padding: 15px 25px;
+    border-radius: 8px;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .question-counter {
@@ -403,4 +441,18 @@ h1 {
 .continue-prompt .no {
     background: #f5f5f5;
     color: #333;
+}
+
+/* Submit and Skip button styles */
+.button-row {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.button-row .emotion-button {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
 }

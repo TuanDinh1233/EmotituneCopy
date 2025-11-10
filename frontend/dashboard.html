@@ -3,32 +3,325 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <title>Results — EmotiTunes</title>
+        <title>Dashboard — EmotiTunes</title>
         <link rel="stylesheet" href="style.css">
+        <style>
+            /* Dashboard-specific enhanced styles */
+            body {
+                padding: 2rem 1rem;
+                gap: 1.5rem;
+            }
+
+            .dashboard-header {
+                text-align: center;
+                margin-bottom: 2rem;
+                animation: fadeInDown 0.6s ease;
+            }
+
+            .dashboard-header h1 {
+                color: white;
+                font-size: 2.5rem;
+                margin: 0;
+                text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                background: linear-gradient(135deg, #fff 0%, #e0e0ff 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .dashboard-container {
+                display: grid;
+                grid-template-columns: 1fr 300px;
+                gap: 2rem;
+                max-width: 1400px;
+                width: 100%;
+                animation: fadeInUp 0.6s ease;
+            }
+
+            @media (max-width: 1024px) {
+                .dashboard-container {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .playlist-section {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border-radius: 24px;
+                padding: 2rem;
+                box-shadow: 0 8px 32px rgba(106, 48, 147, 0.2);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+
+            .playlist-section:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 48px rgba(106, 48, 147, 0.3);
+            }
+
+            .visual-header {
+                position: relative;
+                margin-bottom: 1.5rem;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            }
+
+            .visual-header img {
+                width: 100%;
+                height: auto;
+                max-height: 350px;
+                object-fit: cover;
+                display: block;
+            }
+
+            .playlist-title {
+                color: #6a3093;
+                font-size: 1.8rem;
+                margin: 0 0 1.5rem 0;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .playlist-title::before {
+                content: "🎵";
+                font-size: 1.5rem;
+            }
+
+            #playlist-container {
+                background: transparent;
+                border-radius: 12px;
+                padding: 0;
+                box-shadow: none;
+                max-width: 100%;
+            }
+
+            .song-item {
+                background: linear-gradient(135deg, rgba(106, 48, 147, 0.05) 0%, rgba(160, 68, 255, 0.05) 100%);
+                border: 1px solid rgba(106, 48, 147, 0.1);
+                border-radius: 12px;
+                padding: 1rem;
+                margin-bottom: 0.75rem;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                position: relative;
+            }
+
+            .song-item:hover {
+                background: linear-gradient(135deg, rgba(106, 48, 147, 0.12) 0%, rgba(160, 68, 255, 0.12) 100%);
+                transform: translateX(8px);
+                box-shadow: 0 4px 16px rgba(106, 48, 147, 0.15);
+            }
+
+            .song-item:last-child {
+                margin-bottom: 0;
+            }
+
+            .song-logo {
+                flex-shrink: 0;
+            }
+
+            .song-details {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .spotify-link-btn {
+                background: linear-gradient(135deg, #1DB954, #1ed760);
+                border: none;
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                cursor: pointer;
+                font-size: 1.2rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+                flex-shrink: 0;
+                margin-left: auto;
+                text-decoration: none;
+            }
+
+            .spotify-link-btn:hover {
+                transform: scale(1.1);
+                box-shadow: 0 6px 20px rgba(29, 185, 84, 0.5);
+                background: linear-gradient(135deg, #1ed760, #1fdf64);
+            }
+
+            .spotify-link-btn:active {
+                transform: scale(0.95);
+            }
+
+            .sidebar {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .action-card {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border-radius: 20px;
+                padding: 1.5rem;
+                box-shadow: 0 8px 32px rgba(106, 48, 147, 0.2);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+
+            .action-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 48px rgba(106, 48, 147, 0.3);
+            }
+
+            .action-card h3 {
+                color: #6a3093;
+                font-size: 1.2rem;
+                margin: 0 0 1rem 0;
+                font-weight: 600;
+            }
+
+            .dashboard-button {
+                background: linear-gradient(135deg, #6a3093, #a044ff);
+                border: none;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                color: white;
+                text-decoration: none;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-align: center;
+                display: block;
+                margin-bottom: 0.75rem;
+                box-shadow: 0 4px 15px rgba(106, 48, 147, 0.3);
+            }
+
+            .dashboard-button:last-child {
+                margin-bottom: 0;
+            }
+
+            .dashboard-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 25px rgba(106, 48, 147, 0.4);
+                background: linear-gradient(135deg, #7d3fa8, #b354ff);
+            }
+
+            .dashboard-button:active {
+                transform: translateY(0);
+                box-shadow: 0 2px 10px rgba(106, 48, 147, 0.3);
+            }
+
+            #exportBtn {
+                background: linear-gradient(135deg, #1DB954, #1ed760);
+                box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
+            }
+
+            #exportBtn:hover {
+                background: linear-gradient(135deg, #1ed760, #1fdf64);
+                box-shadow: 0 6px 25px rgba(29, 185, 84, 0.4);
+            }
+
+            #loginBtn {
+                background: linear-gradient(135deg, #666, #999);
+            }
+
+            #status {
+                margin-top: 1.5rem;
+                padding: 1.25rem;
+                border-radius: 16px;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                color: #333;
+                display: none;
+                box-shadow: 0 4px 20px rgba(106, 48, 147, 0.15);
+                animation: fadeIn 0.3s ease;
+                max-width: 1400px;
+                width: 100%;
+            }
+
+            #status a {
+                color: #6a3093;
+                font-weight: 600;
+                text-decoration: none;
+                transition: color 0.2s ease;
+            }
+
+            #status a:hover {
+                color: #a044ff;
+                text-decoration: underline;
+            }
+
+            @keyframes fadeInDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+        </style>
     </head>
     <body>
+        <div class="dashboard-header">
+            <h1>✨ Welcome to Your Dashboard</h1>
+        </div>
 
-        <div><h1>Welcome to the dashboard!</h1></div>
-
-        <!--Table-->
-        <div id = "dashboard-main-table">
-            <!--1st col (Image, playlist)-->
-            <div>
-                <img src = "src/gifs/forest1.gif" alt="forest gif" width="600" height="400">
-                <!--Make playlist here!-->
-                <h2>Your Recommended Playlist</h2>
+        <div class="dashboard-container">
+            <!-- Main playlist section -->
+            <div class="playlist-section">
+                <div class="visual-header">
+                    <img src="src/gifs/forest1.gif" alt="Ambient visualization" />
+                </div>
+                <h2 class="playlist-title">Your Recommended Playlist</h2>
+                <p style="color: #666; font-size: 0.9rem; margin: -0.5rem 0 1rem 0;">
+                    ℹ️ Click 🎧 to open and play songs in Spotify
+                </p>
                 <div id="playlist-container"></div>
             </div>
 
-            <!--2nd col buttons-->
-            <div id="dashboard-buttons">
-                <a class = "dashboard-button" href = "settings.html">Settings button</a>
-                <a class = "dashboard-button" href = "index.html">Mood Change button</a>
+            <!-- Sidebar with actions -->
+            <div class="sidebar">
+                <div class="action-card">
+                    <h3>🎯 Quick Actions</h3>
+                    <a class="dashboard-button" href="settings.html">⚙️ Settings</a>
+                    <a class="dashboard-button" href="index.html">🎭 New Questionnaire</a>
+                </div>
+
+                <div class="action-card">
+                    <h3>🎧 Export</h3>
+                    <button id="loginBtn" class="dashboard-button" style="display: none;">🔐 Log in to Spotify</button>
+                    <button id="exportBtn" class="dashboard-button">📤 Export to Spotify</button>
+                </div>
             </div>
         </div>
 
-        <!--Separate row-->
-        <div><a class = "dashboard-button">Export Playlist</a></div>
+        <div id="status"></div>
 
         <!--Stores the script for this page-->
         <script src="dashboard.js"></script>

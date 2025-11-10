@@ -19,6 +19,24 @@
     // choicesContainer will be initialized after DOMContentLoaded
     let choicesContainer = null;
 
+        // API base and lightweight status helper
+        const API_BASE = window.API_BASE || 'http://localhost:3001';
+        function showResult(html) {
+            let el = document.getElementById('resultsStatus');
+            if (!el) {
+                el = document.createElement('div');
+                el.id = 'resultsStatus';
+                el.style.maxWidth = '720px';
+                el.style.margin = '16px auto';
+                el.style.padding = '12px 16px';
+                el.style.borderRadius = '12px';
+                el.style.background = '#f6f7f9';
+                el.style.color = '#111';
+                document.body.prepend(el);
+            }
+            el.innerHTML = html;
+        }
+
         // Function to display a questions
         function displayQuestion() {
             selectedChoice = null;
@@ -105,6 +123,55 @@
             // Reset submit button
             updateSubmitState();
         }
+        
+        // Function to finish the questionnaire and call backend
+        window.finishQuestions = async function() {
+            // Close the modal if visible
+            const modal = document.getElementById('continuePrompt');
+            if (modal) modal.style.display = 'none';
+            // Show a quick status
+            showResult('<p>Generating your playlist...</p>');
+
+            // Build a simple answers object from responses
+            const answers = {};
+            questionResponses.forEach((r, i) => {
+                // use question text as key (shortened) and response
+                answers[`q${i+1}`] = { question: r.Question.Question, answer: r.Response };
+            });
+
+            try {
+                const resp = await fetch(`${API_BASE}/api/suggest`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ answers, limit: 5 })
+                });
+
+                if (!resp.ok) {
+                    const err = await resp.text();
+                    showResult(`<p>Error from server: ${resp.status} ${err}</p>`);
+                    return;
+                }
+
+                const data = await resp.json();
+
+                // Save suggestions and go to results page
+                const suggestions = data.suggestions || [];
+                console.log('[Quiz] Received suggestions:', suggestions.length, 'items');
+                try { 
+                    sessionStorage.setItem('emotitunes_suggestions', JSON.stringify(suggestions));
+                    console.log('[Quiz] Saved to sessionStorage');
+                } catch(e) { console.error('[Quiz] sessionStorage error:', e); }
+                try { 
+                    localStorage.setItem('emotitunes_suggestions', JSON.stringify(suggestions));
+                    console.log('[Quiz] Saved to localStorage');
+                } catch(e) { console.error('[Quiz] localStorage error:', e); }
+                window.location.href = 'results.html';
+                return;
+
+            } catch (err) {
+                showResult(`<p>Unexpected error: ${err.message || err}</p>`);
+            }
+        };
 
         function selectChoice(buttonEl) {
             // Deselect all choice buttons
@@ -182,14 +249,6 @@
 
         // expose submit to window for button onclick
         window.submitAnswer = submitAnswer;
-
-        // Function to finish the questionnaire
-        window.finishQuestions = function() {
-            // Store final results
-            console.log('Final responses:', questionResponses);
-            alert('Thank you for completing the questionnaire! Your responses have been recorded.');
-            // Here you could add code to send the results to a server or process them further
-        };
 
         // Welcome message
         alert("Welcome to Emotitunes! \nThis website will ask you a series of questions about your music preferences and emotions. \n\nYou'll need to answer at least 10 questions, and then you can choose to continue or finish. \n\nYour responses will help us understand your preferences better. \n\nEnjoy your musical journey with EmotiTunes!");

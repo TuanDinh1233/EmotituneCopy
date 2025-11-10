@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Results — EmotiTunes</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Results page styling matching dashboard */
+    body {
+      padding: 2rem 1rem;
+      gap: 1.5rem;
+    }
+
+    .results-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      animation: fadeInDown 0.6s ease;
+    }
+
+    .results-header h1 {
+      color: white;
+      font-size: 2.5rem;
+      margin: 0 0 0.5rem 0;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(135deg, #fff 0%, #e0e0ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .results-header p {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    .results-container {
+      max-width: 1200px;
+      width: 100%;
+      animation: fadeInUp 0.6s ease;
+    }
+
+    .results-section {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(106, 48, 147, 0.2);
+      margin-bottom: 1.5rem;
+    }
+
+    .playlist-title {
+      color: #6a3093;
+      font-size: 1.8rem;
+      margin: 0 0 1.5rem 0;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .playlist-title::before {
+      content: "🎵";
+      font-size: 1.5rem;
+    }
+
+    .tracks {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .card {
+      background: linear-gradient(135deg, rgba(106, 48, 147, 0.05) 0%, rgba(160, 68, 255, 0.05) 100%);
+      border: 1px solid rgba(106, 48, 147, 0.1);
+      border-radius: 12px;
+      padding: 1rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      background: linear-gradient(135deg, rgba(106, 48, 147, 0.12) 0%, rgba(160, 68, 255, 0.12) 100%);
+      transform: translateX(8px);
+      box-shadow: 0 4px 16px rgba(106, 48, 147, 0.15);
+    }
+
+    .thumb {
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #eee;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .title {
+      font-weight: 600;
+      font-size: 16px;
+      color: #6a3093;
+    }
+
+    .artist {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .spotify-link-btn {
+      background: linear-gradient(135deg, #1DB954, #1ed760);
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+      flex-shrink: 0;
+      margin-left: auto;
+      text-decoration: none;
+    }
+
+    .spotify-link-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(29, 185, 84, 0.5);
+      background: linear-gradient(135deg, #1ed760, #1fdf64);
+    }
+
+    .spotify-link-btn:active {
+      transform: scale(0.95);
+    }
+
+    .action-buttons {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 32px rgba(106, 48, 147, 0.2);
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #6a3093, #a044ff);
+      border: none;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      color: white;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(106, 48, 147, 0.3);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(106, 48, 147, 0.4);
+      background: linear-gradient(135deg, #7d3fa8, #b354ff);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn.export {
+      background: linear-gradient(135deg, #1DB954, #1ed760);
+      box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
+    }
+
+    .btn.export:hover {
+      background: linear-gradient(135deg, #1ed760, #1fdf64);
+      box-shadow: 0 6px 25px rgba(29, 185, 84, 0.4);
+    }
+
+    #status {
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      color: #333;
+      display: none;
+      box-shadow: 0 4px 20px rgba(106, 48, 147, 0.15);
+      animation: fadeIn 0.3s ease;
+      max-width: 1200px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    #status a {
+      color: #6a3093;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    #status a:hover {
+      color: #a044ff;
+      text-decoration: underline;
+    }
+
+    .muted {
+      color: #aaa;
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 1.1rem;
+    }
+
+    #loginBtn {
+      display: none !important;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="results-header">
+    <h1>🎉 Your EmotiTunes Playlist</h1>
+    <p>Your personalized music recommendations based on your mood</p>
+  </div>
+
+  <div class="results-container">
+    <div class="results-section">
+      <h2 class="playlist-title">Recommended Songs</h2>
+      <p style="color: #666; font-size: 0.9rem; margin: -0.5rem 0 1rem 0;">
+        ℹ️ Click 🎧 to open and play songs in Spotify
+      </p>
+      <div id="empty" class="muted" style="display:none;">No suggestions found. Go back and complete the questionnaire.</div>
+      <div id="tracks" class="tracks"></div>
+    </div>
+
+    <div class="action-buttons">
+      <button id="loginBtn" class="btn" style="display: none;">🔐 Log in to Spotify</button>
+      <button id="createBtn" class="btn export">📤 Export to Spotify</button>
+      <button id="dashboardBtn" class="btn">📊 Go to Dashboard</button>
+    </div>
+  </div>
+
+  <div id="status"></div>
+
+  <script>
+    const API_BASE = window.API_BASE || 'http://localhost:3001';
+
+    function setStatus(html) {
+      const el = document.getElementById('status');
+      el.innerHTML = html;
+      el.style.display = 'block';
+    }
+    function clearStatus() {
+      const el = document.getElementById('status');
+      el.style.display = 'none';
+      el.innerHTML = '';
+    }
+
+    function parseHashParams() {
+      const hash = window.location.hash || '';
+      const out = {};
+      if (hash.startsWith('#')) {
+        hash.substring(1).split('&').forEach(kv => {
+          const [k, v] = kv.split('=');
+          if (k) out[decodeURIComponent(k)] = decodeURIComponent(v || '');
+        });
+      }
+      return out;
+    }
+
+    let accessToken = null;
+    const hp = parseHashParams();
+    if (hp.access_token) {
+      accessToken = hp.access_token;
+    }
+
+    const loginBtn = document.getElementById('loginBtn');
+    loginBtn.addEventListener('click', () => {
+      window.location.href = API_BASE + '/login?returnTo=results.html';
+    });
+    const dashboardBtn = document.getElementById('dashboardBtn');
+    dashboardBtn.addEventListener('click', () => {
+      window.location.href = 'dashboard.html';
+    });
+
+    const tracksEl = document.getElementById('tracks');
+    const emptyEl = document.getElementById('empty');
+
+    function renderSuggestions(list) {
+      tracksEl.innerHTML = '';
+      if (!list || list.length === 0) {
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+      for (const item of list) {
+        const img = item?.found?.album_image_url || '';
+        const title = item?.found?.name || item?.suggested?.title || 'Unknown Title';
+        const artists = (item?.found?.artists && item.found.artists.join(', ')) || item?.suggested?.artist || 'Unknown Artist';
+        const spotifyUrl = item?.found?.spotify_url;
+
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        const thumb = document.createElement('img');
+        thumb.className = 'thumb';
+        thumb.src = img || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+        thumb.alt = 'Album Art';
+        card.appendChild(thumb);
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        const t = document.createElement('div');
+        t.className = 'title';
+        t.textContent = title;
+        const a = document.createElement('div');
+        a.className = 'artist';
+        a.textContent = artists;
+        meta.appendChild(t);
+        meta.appendChild(a);
+
+        card.appendChild(meta);
+
+        // Add Spotify link button
+        if (spotifyUrl) {
+          const spotifyBtn = document.createElement('a');
+          spotifyBtn.href = spotifyUrl;
+          spotifyBtn.target = '_blank';
+          spotifyBtn.className = 'spotify-link-btn';
+          spotifyBtn.title = 'Open in Spotify';
+          spotifyBtn.textContent = '🎧';
+          card.appendChild(spotifyBtn);
+        }
+
+        tracksEl.appendChild(card);
+      }
+    }
+
+    let suggestions = [];
+    try {
+      const sessionRaw = sessionStorage.getItem('emotitunes_suggestions');
+      const localRaw = localStorage.getItem('emotitunes_suggestions');
+      console.log('[Results] sessionStorage:', sessionRaw ? 'found' : 'empty');
+      console.log('[Results] localStorage:', localRaw ? 'found' : 'empty');
+      
+      const raw = sessionRaw || localRaw;
+      if (raw) {
+        suggestions = JSON.parse(raw);
+        console.log('[Results] Loaded suggestions:', suggestions.length, 'items');
+      }
+    } catch (e) {
+      console.error('[Results] Error loading suggestions:', e);
+    }
+
+    // Ensure both stores are populated for other pages
+    try { 
+      if (suggestions && suggestions.length) {
+        sessionStorage.setItem('emotitunes_suggestions', JSON.stringify(suggestions));
+        console.log('[Results] Re-saved to sessionStorage');
+      }
+    } catch(e) { console.error('[Results] sessionStorage error:', e); }
+    try { 
+      if (suggestions && suggestions.length) {
+        localStorage.setItem('emotitunes_suggestions', JSON.stringify(suggestions));
+        console.log('[Results] Re-saved to localStorage');
+      }
+    } catch(e) { console.error('[Results] localStorage error:', e); }
+
+    renderSuggestions(suggestions);
+
+    const createBtn = document.getElementById('createBtn');
+    createBtn.addEventListener('click', async () => {
+      if (!accessToken) {
+        setStatus('Please log in to Spotify first. <button onclick="document.getElementById(\'loginBtn\').style.display=\'inline-block\';document.getElementById(\'loginBtn\').click();" style="margin-left:10px;padding:8px 12px;background:#6a3093;color:white;border:none;border-radius:5px;cursor:pointer;">Log in Now</button>');
+        document.getElementById('loginBtn').style.display = 'inline-block';
+        return;
+      }
+      const uris = suggestions.map(s => s?.found?.uri).filter(Boolean);
+      if (uris.length === 0) {
+        setStatus('No Spotify tracks found to add to a playlist.');
+        return;
+      }
+      const name = prompt('Playlist name', 'EmotiTunes Mix');
+      if (!name) return;
+
+      setStatus('Creating playlist on Spotify...');
+      try {
+        const resp = await fetch(`${API_BASE}/api/create-playlist`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ access_token: accessToken, name, public: false, trackUris: uris })
+        });
+        if (!resp.ok) {
+          const txt = await resp.text();
+          setStatus(`Failed to create playlist: ${resp.status} ${txt}`);
+          return;
+        }
+        const data = await resp.json();
+        const url = data?.playlist?.external_urls?.spotify;
+        if (url) {
+          setStatus(`✅ Playlist created successfully! <a href="${url}" target="_blank">Open in Spotify</a>`);
+        } else {
+          setStatus('✅ Playlist created! (No external URL returned)');
+        }
+      } catch (err) {
+        setStatus('Unexpected error: ' + (err?.message || err));
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EmotiTunes Storage Debug</title>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #111; color: #0f0; }
+    pre { background: #222; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    button { background: #0a0; color: #000; border: none; padding: 10px; margin: 5px; cursor: pointer; border-radius: 5px; }
+    button:hover { background: #0c0; }
+    .warning { color: #f80; }
+  </style>
+</head>
+<body>
+  <h1>EmotiTunes Storage Debugger</h1>
+  
+  <h2>Current Storage Contents:</h2>
+  <pre id="output">Loading...</pre>
+  
+  <button onclick="refreshDisplay()">Refresh</button>
+  <button onclick="clearStorage()">Clear All Storage</button>
+  <button onclick="testStorage()">Test Save Sample Data</button>
+  
+  <script>
+    function refreshDisplay() {
+      const output = document.getElementById('output');
+      let text = '=== SessionStorage ===\n';
+      const session = sessionStorage.getItem('emotitunes_suggestions');
+      if (session) {
+        try {
+          const parsed = JSON.parse(session);
+          text += `Found ${parsed.length} suggestions\n`;
+          text += JSON.stringify(parsed, null, 2) + '\n\n';
+        } catch (e) {
+          text += 'ERROR parsing: ' + e.message + '\n\n';
+        }
+      } else {
+        text += 'EMPTY\n\n';
+      }
+      
+      text += '=== LocalStorage ===\n';
+      const local = localStorage.getItem('emotitunes_suggestions');
+      if (local) {
+        try {
+          const parsed = JSON.parse(local);
+          text += `Found ${parsed.length} suggestions\n`;
+          text += JSON.stringify(parsed, null, 2) + '\n\n';
+        } catch (e) {
+          text += 'ERROR parsing: ' + e.message + '\n\n';
+        }
+      } else {
+        text += 'EMPTY\n\n';
+      }
+      
+      output.textContent = text;
+      console.log('[Debug] Storage refreshed');
+    }
+    
+    function clearStorage() {
+      if (confirm('Clear all EmotiTunes storage?')) {
+        sessionStorage.removeItem('emotitunes_suggestions');
+        localStorage.removeItem('emotitunes_suggestions');
+        console.log('[Debug] Storage cleared');
+        refreshDisplay();
+      }
+    }
+    
+    function testStorage() {
+      const sample = [
+        {
+          suggested: { title: "Test Song 1", artist: "Test Artist 1" },
+          found: {
+            id: "test1",
+            name: "Test Song 1",
+            artists: ["Test Artist 1"],
+            album: "Test Album",
+            album_image_url: "",
+            preview_url: null,
+            spotify_url: "https://open.spotify.com/track/test1",
+            uri: "spotify:track:test1"
+          }
+        },
+        {
+          suggested: { title: "Test Song 2", artist: "Test Artist 2" },
+          found: {
+            id: "test2",
+            name: "Test Song 2",
+            artists: ["Test Artist 2"],
+            album: "Test Album 2",
+            album_image_url: "",
+            preview_url: null,
+            spotify_url: "https://open.spotify.com/track/test2",
+            uri: "spotify:track:test2"
+          }
+        }
+      ];
+      
+      sessionStorage.setItem('emotitunes_suggestions', JSON.stringify(sample));
+      localStorage.setItem('emotitunes_suggestions', JSON.stringify(sample));
+      console.log('[Debug] Test data saved');
+      alert('Test data saved! Now go to dashboard.html to see if it shows up.');
+      refreshDisplay();
+    }
+    
+    refreshDisplay();
+  </script>
+</body>
+</html>

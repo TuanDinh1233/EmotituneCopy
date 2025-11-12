@@ -6,18 +6,17 @@
     <title>EmotiTunes - How are you feeling?</title>
     <link rel="stylesheet" href="style.css">
 
-
     <script type="module">
         import { questions, QuizResponse } from './questions.js';
 
-    // Initialize variables
-    let currentQuestionIndex = 0;
-    let questionResponses = [];
-    let currentQuestion = null;
-    let selectedChoice = null; // stores currently selected choice value
+        // Initialize variables
+        let currentQuestionIndex = 0;
+        let questionResponses = [];
+        let currentQuestion = null;
+        let selectedChoice = null; // stores currently selected choice value
 
-    // choicesContainer will be initialized after DOMContentLoaded
-    let choicesContainer = null;
+        // choicesContainer will be initialized after DOMContentLoaded
+        let choicesContainer = null;
 
         // API base and lightweight status helper
         const API_BASE = window.API_BASE || 'http://localhost:3001';
@@ -42,9 +41,6 @@
             selectedChoice = null;
             currentQuestion = questions[currentQuestionIndex];
             document.getElementById('questionText').textContent = currentQuestion.Question;
-
-            // Update the counter (number of answered + 1)
-            document.getElementById('currentQuestion').textContent = questionResponses.length + 1;
 
             // Clear and populate choices
             choicesContainer.innerHTML = '';
@@ -233,12 +229,25 @@
             // Visual feedback — briefly mark selected
             selectedBtn.classList.add('selected');
 
+            // Update the counter (number of answered + 1)
+            document.getElementById('currentQuestion').textContent = questionResponses.length;
+
             // Check if we've reached the maximum number of questions
             if (questionResponses.length === questions.length) {
-                window.finishQuestions();
+                finishQuiz();
             } else {
                 moveToNextQuestion();
             }
+        }
+
+        function finishQuiz() {
+            //Replaces text in question header
+            document.getElementById('questionText').innerText = 'Thank you for completing the quiz!';
+            //Hides choices container
+            choicesContainer.innerHTML = '';
+            choicesContainer.style.display = 'none';
+            //Calls API to finish questions
+            window.finishQuestions();
         }
 
         // Function to move to next question

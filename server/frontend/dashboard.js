@@ -63,7 +63,7 @@ if (!Array.isArray(suggestions) || suggestions.length === 0) {
 }
 
 // Spotify integration for export playlist
-const API_BASE = window.API_BASE || 'http://localhost:3001';
+const API_BASE = window.API_BASE || window.location.origin;
 
 function setStatus(html) {
     const el = document.getElementById('status');
@@ -141,7 +141,12 @@ if (exportBtn) {
             
             if (!resp.ok) {
                 const txt = await resp.text();
-                setStatus(`Failed to create playlist: ${resp.status} ${txt}`);
+                try {
+                    const errorData = JSON.parse(txt);
+                    setStatus(`❌ Error: ${errorData.error || resp.status}`);
+                } catch {
+                    setStatus(`❌ Failed to create playlist: ${resp.status} ${txt}`);
+                }
                 return;
             }
             

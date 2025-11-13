@@ -4,18 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EmotiTunes Settings</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="setttings.css">
 </head>
 <body>
     <div class="container">
         <h1>Settings</h1>
         
         <div class="settings-group">
+            <!--Stores the setting for font family---->
             <div>
                 <label for="fontInput">Text Font:</label>
-                <input type="text" id="fontInput" placeholder="Enter font name">
+                 <select id="fontInput">
+                    <option value="">Select font</option>
+                    <option value="Arial">Arial</option>
+                    <option value="Courier New">Courier New</option>
+                    <option value="Georgia">Georgia</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Verdana">Verdana</option>
+                    <option value="Comic Sans MS">Comic Sans MS</option>
+                    <option value="Trebuchet MS">Trebuchet MS</option>
+                    <option value="Impact">Impact</option>
+                    <option value="Lucida Console">Lucida Console</option>
+                    <option value="press-start-2p-regular">Press Start 2P</option>
+                 </select>
                 <button onclick="applyFont()">Apply Font</button>
             </div>
+
+            <!--Stores setting for font size-->
+            <div>
+                <label for="fontSizeInput">Text Size:</label>
+                <select id="fontSizeInput">
+                    <option value="">Select size</option>
+                    <option value="12">12</option>
+                    <option value="14">14</option>
+                    <option value="16">16</option>
+                    <option value="18">18</option>
+                    <option value="20">20</option>
+                    <option value="22">22</option>
+                    <option value="24">24</option>
+                    <option value="26">26</option>
+                    <option value="28">28</option>
+                    <option value="32">32</option>
+                    <option value="36">36</option>
+                    <option value="48">48</option>
+                </select>
+                <button onclick="applyFontSize()">Apply Size</button>
+            </div>
+
+            <!--Stores settings for gradient theme-->
+            <div>
+                <label for="gradientInput">Gradient Theme:</label>
+                <select id="gradientInput">
+                    <option value="">Select gradient</option>
+                    <option value="linear-gradient(120deg, #3B5CD8, #A030D0, #FF6EC7, #00C6FF)">Default</option>
+                    <option value="linear-gradient(to right, #ff7e5f, #feb47b)">Sunset</option>
+                    <option value="linear-gradient(to right, #6a11cb, #2575fc)">Purple Blue</option>
+                    <option value="linear-gradient(to right, #00c6ff, #0072ff)">Sky</option>
+                    <option value="linear-gradient(to right, #ff6a00, #ee0979)">Flamingo</option>
+                    <option value="linear-gradient(to right, #43cea2, #185a9d)">Ocean Blue</option>
+                    <option value="linear-gradient(to right, #f7971e, #ffd200)">Sunrise</option>
+                    <option value="linear-gradient(to right, #f953c4, #b91d73)">Pink Glow</option>
+                    <option value="linear-gradient(to right, #56ab2f, #a8e063)">Lush Green</option>
+                    <option value="linear-gradient(to right, #614385, #516395)">Deep Purple</option>
+                    <option value="linear-gradient(to right, #eecda3, #ef629d)">Peach</option>
+                    <option value="linear-gradient(to right, #232526, #414345)">Dark Grey</option> 
+                    <option value ="linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%)">Warm Flame</option>
+                    <option value="linear-gradient(135deg, #fff89a 0%, #ffdf5d 100%)">Sunny Morning</option>
+                    <option value="linear-gradient(to right, #667eea, #764ba2)">Cool Breeze</option>
+                </select>
+                <button onclick="applyGradient()">Apply Gradient</button>
+            </div>
+
             <div><a href = "quiz-preferences.html">Adjust Quiz Preferences</a></div>
             <div><a href = "song-preferences.html">Adjust Song Preferences</a></div>
             <div><a href="dashboard.html">Go Back</a></div>
@@ -23,10 +86,88 @@
     </div>
 
     <script>
+        // Gradient application function
+        function applyGradient() {
+            const DEFAULT_GRADIENT = "linear-gradient(120deg, #3B5CD8, #A030D0, #FF6EC7, #00C6FF)";
+
+            const gradientInput = document.getElementById('gradientInput').value;
+            if (gradientInput) {
+                document.body.style.background = gradientInput;
+
+                //If statement for text color
+                // if (gradientInput == DEFAULT_GRADIENT) {
+                //     document.body.style.color = "#6a3093";
+                // } else {
+                //     document.body.style.color = "#550000";
+                // }
+
+                //IF statement for background size
+                if (gradientInput == DEFAULT_GRADIENT) {
+                    document.body.style.backgroundSize = "300% 300%";
+                } else {
+                    document.body.style.backgroundSize = "auto";
+                }
+
+                try { localStorage.setItem('emotitunes_gradient', gradientInput); } catch (e) {}
+            }
+        }
+
+        // Known press-start classes (matches setttings.css)
+        const PRESS_CLASSES = ['press-start-2p-regular', 'press-start-2p-bold', 'press-start-2p-italic', 'press-start-2p-bold-italic'];
+
         function applyFont() {
             const fontInput = document.getElementById('fontInput').value;
-            document.body.style.fontFamily = fontInput;
+
+            // If user picked a press-start class, apply it to the body (so it affects player/text)
+            if (fontInput && fontInput.startsWith('press-start-')) {
+                // remove other press-start classes
+                document.body.classList.remove(...PRESS_CLASSES);
+                // add the selected class
+                document.body.classList.add(fontInput);
+                // clear inline font-family to avoid conflicts
+                document.body.style.fontFamily = '';
+                try { localStorage.setItem('emotitunes_player_start_font', fontInput); } catch (e) {}
+                console.log('Applied press-start class:', fontInput);
+            } else {
+                // not a press-start selection — remove press-start classes and apply inline font family
+                document.body.classList.remove(...PRESS_CLASSES);
+                if (fontInput) {
+                    document.body.style.fontFamily = fontInput;
+                    try { localStorage.setItem('emotitunes_text_font', fontInput); } catch (e) {}
+                }
+                console.log('Applied font-family:', fontInput);
+            }
         }
+
+        function applyFontSize() {
+            const fontSizeInput = document.getElementById('fontSizeInput').value;
+            if (fontSizeInput) {
+                document.body.style.fontSize = fontSizeInput + 'px';
+                try { localStorage.setItem('emotitunes_text_size', fontSizeInput); } catch (e) {}
+            }
+        }
+
+        // Restore persisted font/class on load
+        window.addEventListener('DOMContentLoaded', () => {
+            try {
+                const savedClass = localStorage.getItem('emotitunes_player_start_font');
+                const savedFont = localStorage.getItem('emotitunes_text_font');
+                const savedSize = localStorage.getItem('emotitunes_text_size');
+                const fontSel = document.getElementById('fontInput');
+                const sizeSel = document.getElementById('fontSizeInput');
+
+                if (savedClass) {
+                    document.body.classList.remove(...PRESS_CLASSES);
+                    document.body.classList.add(savedClass);
+                    if (fontSel) fontSel.value = savedClass;
+                } else if (savedFont) {
+                    document.body.style.fontFamily = savedFont;
+                    if (fontSel) fontSel.value = savedFont;
+                }
+
+                if (savedSize && sizeSel) sizeSel.value = savedSize;
+            } catch (e) { /* ignore storage errors */ }
+        });
     </script>
 </body>
 </html>

@@ -11,8 +11,8 @@ const PORT = process.env.PORT || 3001;
 
 const clientId = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-const redirectUri = process.env.SPOTIFY_REDIRECT_URI || "http://localhost:3001/callback";
-const FRONTEND_BASE = process.env.FRONTEND_BASE || 'http://localhost:8080';
+const redirectUri = process.env.SPOTIFY_REDIRECT_URI || "https://emotituneslivecopy.onrender.com/callback";
+const FRONTEND_BASE = process.env.FRONTEND_BASE || 'https://emotituneslivecopy.onrender.com';
 
 app.use(cors());
 app.use(express.json());
@@ -22,6 +22,9 @@ const spotifyApi = new SpotifyWebApi({
     clientId: process.env.SPOTIFY_CLIENT_ID,
     clientSecret: process.env.SPOTIFY_CLIENT_SECRET
 });
+
+
+
 
 // OpenAI client (new OpenAI SDK)
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -181,6 +184,7 @@ app.post('/api/create-playlist', async (req, res) => {
             return res.status(500).json({ error: 'Failed to determine Spotify user id from access token', details: me });
         }
         const userId = me.body.id;
+        console.log('[Playlist] User ID:', userId, 'Product:', me.body.product);
 
         // Create playlist
         const created = await userSpotify.createPlaylist(name, { public: !!isPublic, description });
@@ -189,6 +193,7 @@ app.post('/api/create-playlist', async (req, res) => {
             return res.status(500).json({ error: 'Failed to create playlist', details: created });
         }
         const playlistId = created.body.id;
+        console.log('[Playlist] Created playlist:', playlistId);
 
         // Add tracks (Spotify allows adding up to 100 at a time)
         const chunkSize = 100;
@@ -209,10 +214,19 @@ app.post('/api/create-playlist', async (req, res) => {
         res.json({ playlist: playlist.body });
     } catch (err) {
         console.error('Error in /api/create-playlist', err);
+        
+        // Provide detailed error messages
+        let userMessage = 'Failed to create playlist';
+        if (err?.statusCode === 403) {
+            userMessage = 'Permission denied: Your Spotify account may be a Guest or Family Plan account that cannot create playlists. Please use a personal Spotify account with full permissions.';
+        } else if (err?.statusCode === 401) {
+            userMessage = 'Unauthorized: Your Spotify session has expired. Please log in again.';
+        }
+        
         // If Spotify returns 401, tell user to refresh token / check scopes
         const status = err?.statusCode || 500;
         const message = err?.message || 'Failed to create playlist';
-        res.status(status).json({ error: message, details: err });
+        res.status(status).json({ error: userMessage, details: { message, statusCode: err?.statusCode } });
     }
 });
 
@@ -263,6 +277,14 @@ app.get("/callback", async (req, res) => {
   } else {
     res.status(400).json({ error: "Failed to get token", details: tokenData });
   }
+});
+
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'frontend')));
+
+// Fallback for SPA routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
 });
 
 

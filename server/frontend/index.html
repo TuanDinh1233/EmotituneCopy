@@ -19,8 +19,8 @@
     // choicesContainer will be initialized after DOMContentLoaded
     let choicesContainer = null;
 
-        // API base and lightweight status helper
-        const API_BASE = window.API_BASE || 'http://localhost:3001';
+        // API base - use current origin (works with both localhost and production URLs)
+        const API_BASE = window.API_BASE || window.location.origin;
         function showResult(html) {
             let el = document.getElementById('resultsStatus');
             if (!el) {

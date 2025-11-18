@@ -62,8 +62,8 @@ if (!Array.isArray(suggestions) || suggestions.length === 0) {
     });
 }
 
-// Spotify integration for export playlist
-const API_BASE = window.API_BASE || window.location.origin;
+// Use live backend server
+const API_BASE = 'https://emotituneslivecopy.onrender.com';
 
 function setStatus(html) {
     const el = document.getElementById('status');

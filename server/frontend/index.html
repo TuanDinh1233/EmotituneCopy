@@ -5,18 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EmotiTunes - How are you feeling?</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles/theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <script type="module">
         import { questions, QuizResponse } from './questions.js';
+        import { SettingsManager } from './settings.js';
+        import { SettingsPanel } from './components/SettingsPanel.js';
 
         // Initialize variables
         let currentQuestionIndex = 0;
         let questionResponses = [];
         let currentQuestion = null;
         let selectedChoice = null; // stores currently selected choice value
+        let settingsPanel = null;
 
-        // choicesContainer will be initialized after DOMContentLoaded
+        // Initialize UI elements
         let choicesContainer = null;
+        
+        // Initialize settings panel when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load saved theme
+            document.documentElement.setAttribute('data-theme', localStorage.getItem('emotitunes_theme') || 'light');
+            
+            // Initialize settings panel
+            settingsPanel = new SettingsPanel();
+            
+            // Load previous responses if they exist
+            const savedResponses = SettingsManager.getLastQuizResponses();
+            if (savedResponses && savedResponses.length > 0) {
+                const usePrevious = confirm('Would you like to continue with your previous responses?');
+                if (usePrevious) {
+                    questionResponses = savedResponses;
+                    currentQuestionIndex = Math.min(questionResponses.length, questions.length - 1);
+                }
+            }
+            
+            // Initialize choices container
+            choicesContainer = document.getElementById('choicesContainer');
+            
+            // Display first question
+            displayQuestion();
+        });
 
         // API base - use current origin (works with both localhost and production URLs)
         const API_BASE = window.API_BASE || window.location.origin;
@@ -221,23 +251,31 @@
                 answerValue = selectedBtn.dataset.choice;
             }
 
-            // Create and store response
-            const response = new QuizResponse(currentQuestion, answerValue);
-            questionResponses.push(response);
-            console.log('Recorded response:', response);
+            handleResponse(answerValue);
+        }
 
-            // Visual feedback — briefly mark selected
-            selectedBtn.classList.add('selected');
+        function handleResponse(choice) {
+            const response = new QuizResponse(currentQuestion, choice);
+            
+            // Update or add response
+            const existingIndex = questionResponses.findIndex(r => r.Question.Question === currentQuestion.Question);
+            if (existingIndex >= 0) {
+                questionResponses[existingIndex] = response;
+            } else {
+                questionResponses.push(response);
+            }
+            
+            // Save responses if enabled
+            if (SettingsManager.get('saveResponses')) {
+                SettingsManager.saveQuizResponses(questionResponses);
+            }
 
-            // Update the counter (number of answered + 1)
-            document.getElementById('currentQuestion').textContent = questionResponses.length;
-
-            // Check if we've reached the maximum number of questions
-            if (questionResponses.length === questions.length) {
-                finishQuiz();
+            // Move to next question or show continue prompt
+            if (questionResponses.length === 10) {
+                document.getElementById('continuePrompt').style.display = 'block';
             } else {
                 moveToNextQuestion();
-            }
+            } 
         }
 
         function finishQuiz() {
@@ -271,10 +309,28 @@
     </script>
 </head>
 <body>
-    <div class="question-counter">Question: <span id="currentQuestion">1</span>/10</div>
-    <div class="emotion-form">
-        <h1 id="questionText"></h1>
-        <div class="emotion-options" id="choicesContainer">
+    <div class="app-container">
+        <header class="app-header">
+            <div class="question-counter">Question: <span id="currentQuestion">1</span>/10</div>
+            <button id="settingsBtn" class="settings-btn" title="Settings">⚙️</button>
+        </header>
+        
+        <main class="content">
+            <div class="emotion-form">
+                <h1 id="questionText"></h1>
+                <div id="choicesContainer" class="choices-container"></div>
+            </div>
+        </main>
+        
+        <div id="continuePrompt" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h3>Great job!</h3>
+                <p>You've answered 10 questions. Would you like to continue or finish?</p>
+                <div class="modal-actions">
+                    <button onclick="continueQuestions()" class="btn btn-primary">Continue</button>
+                    <button onclick="finishQuestions()" class="btn btn-secondary">Finish</button>
+                </div>
+            </div>
         </div>
     </div>
 </body>

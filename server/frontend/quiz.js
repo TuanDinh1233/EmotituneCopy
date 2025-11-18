@@ -1,4 +1,6 @@
 import { questions } from './questions.js';
+import { loadTheme } from './theme.js';
+import { SettingsManager } from './settings.js';
 
 // Welcome message
 alert("Welcome to Emotitunes! \nThis website will ask you a series of questions about your music preferences and emotions. \n\nYou'll need to answer at least 10 questions, and then you can choose to continue or finish. \n\nYour responses will help us understand your preferences better. \n\nEnjoy your musical journey with EmotiTunes!");
@@ -7,6 +9,23 @@ alert("Welcome to Emotitunes! \nThis website will ask you a series of questions 
 let currentQuestionIndex = 0;
 let questionResponses = [];
 let currentQuestion = null;
+
+// Load saved theme when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    loadTheme();
+    
+    // Load previous responses if they exist
+    const savedResponses = SettingsManager.getLastQuizResponses();
+    if (savedResponses && savedResponses.length > 0) {
+        const usePrevious = confirm('Would you like to continue with your previous responses?');
+        if (usePrevious) {
+            questionResponses = savedResponses;
+            currentQuestionIndex = Math.min(questionResponses.length, questions.length - 1);
+        }
+    }
+    
+    displayQuestion();
+});
 
 // Function to display a question
 function displayQuestion() {
@@ -39,7 +58,19 @@ function displayQuestion() {
 // Function to handle user response
 function handleResponse(choice) {
     const response = new QuizResponse(currentQuestion, choice);
-    questionResponses.push(response);
+    
+    // Update or add response
+    const existingIndex = questionResponses.findIndex(r => r.Question.Question === currentQuestion.Question);
+    if (existingIndex >= 0) {
+        questionResponses[existingIndex] = response;
+    } else {
+        questionResponses.push(response);
+    }
+    
+    // Save responses to settings
+    if (SettingsManager.get('saveResponses')) {
+        SettingsManager.saveQuizResponses(questionResponses);
+    }
 
     // Check if we've reached 10 questions
     if (questionResponses.length === 10) {
@@ -69,5 +100,4 @@ function finishQuestions() {
     // Here you could add code to send the results to a server or process them further
 }
 
-// Display the first question when the page loads
-displayQuestion();
+// Display is now handled in the DOMContentLoaded event

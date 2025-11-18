@@ -1,0 +1,244 @@
+/* Theme variables */
+:root {
+    /* Light theme (default) */
+    --bg-color: #ffffff;
+    --bg-color2: #f8f9fa;
+    --text-color: #2d3436;
+    --primary-color: #6c5ce7;
+    --secondary-color: #a29bfe;
+    --border-color: #dfe6e9;
+    --card-bg: #ffffff;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark theme */
+.theme-dark {
+    --bg-color: #2d3436;
+    --bg-color2: #1e272e;
+    --text-color: #dfe6e9;
+    --primary-color: #a29bfe;
+    --secondary-color: #6c5ce7;
+    --border-color: #4a4a4a;
+    --card-bg: #2d3436;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Sunset theme */
+.theme-sunset {
+    --bg-color: #ff9a8b;
+    --bg-color2: #ff6b6b;
+    --text-color: #2d3436;
+    --primary-color: #ff4757;
+    --secondary-color: #ff6b81;
+    --border-color: #ff8787;
+    --card-bg: #fff5f5;
+    --shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
+}
+
+/* Ocean theme */
+.theme-ocean {
+    --bg-color: #00cec9;
+    --bg-color2: #0984e3;
+    --text-color: #f1f2f6;
+    --primary-color: #00b894;
+    --secondary-color: #81ecec;
+    --border-color: #74b9ff;
+    --card-bg: #e3f2fd;
+    --shadow: 0 2px 10px rgba(9, 132, 227, 0.3);
+}
+
+/* Base styles */
+body {
+    background: linear-gradient(135deg, var(--bg-color), var(--bg-color2));
+    color: var(--text-color);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Settings button */
+.settings-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.settings-btn:hover {
+    transform: rotate(30deg);
+    background: var(--secondary-color);
+}
+
+/* Settings panel */
+.settings-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100%;
+    background: var(--card-bg);
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    padding: 20px;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.settings-header h3 {
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-color);
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.close-btn:hover {
+    opacity: 1;
+}
+
+.settings-section {
+    margin-bottom: 25px;
+}
+
+.settings-section h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+/* Theme selector */
+.theme-selector {
+    margin-bottom: 20px;
+}
+
+.theme-selector label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.theme-select {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Toggle switches */
+.setting-toggle {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.05);
+    transition: background 0.2s;
+}
+
+.setting-toggle:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.toggle-text {
+    margin-left: 15px;
+    flex-grow: 1;
+}
+
+.toggle-text strong {
+    display: block;
+    margin-bottom: 3px;
+}
+
+.toggle-text small {
+    display: block;
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* Toggle switch styling */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .settings-panel {
+        width: 280px;
+    }
+}

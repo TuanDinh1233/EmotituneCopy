@@ -104,13 +104,15 @@ const loginBtn = document.getElementById('loginBtn');
 const exportBtn = document.getElementById('exportBtn');
 
 if (loginBtn) {
-    loginBtn.addEventListener('click', () => {
+    loginBtn.addEventListener('click', (e) => {
+        e.preventDefault();
         window.location.href = API_BASE + '/login?returnTo=dashboard.html';
     });
 }
 
 if (exportBtn) {
-    exportBtn.addEventListener('click', async () => {
+    exportBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
         if (!accessToken) {
             setStatus('Please log in to Spotify first. <button onclick="document.getElementById(\'loginBtn\').style.display=\'inline-block\';document.getElementById(\'loginBtn\').click();" style="margin-left:10px;padding:8px 12px;background:#6a3093;color:white;border:none;border-radius:5px;cursor:pointer;">Log in Now</button>');
             loginBtn.style.display = 'inline-block';

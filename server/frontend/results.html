@@ -278,9 +278,9 @@
     </div>
 
     <div class="action-buttons">
-      <button id="loginBtn" class="btn" style="display: none;">🔐 Log in to Spotify</button>
-      <button id="createBtn" class="btn export">📤 Export to Spotify</button>
-      <button id="dashboardBtn" class="btn">📊 Go to Dashboard</button>
+      <button id="loginBtn" type="button" class="btn" style="display: none;">🔐 Log in to Spotify</button>
+      <button id="createBtn" type="button" class="btn export">📤 Export to Spotify</button>
+      <button id="dashboardBtn" type="button" class="btn">📊 Go to Dashboard</button>
     </div>
   </div>
 
@@ -320,11 +320,13 @@
     }
 
     const loginBtn = document.getElementById('loginBtn');
-    loginBtn.addEventListener('click', () => {
+    loginBtn.addEventListener('click', (e) => {
+      e.preventDefault();
       window.location.href = API_BASE + '/login?returnTo=results.html';
     });
     const dashboardBtn = document.getElementById('dashboardBtn');
-    dashboardBtn.addEventListener('click', () => {
+    dashboardBtn.addEventListener('click', (e) => {
+      e.preventDefault();
       window.location.href = 'dashboard.html';
     });
 
@@ -414,7 +416,8 @@
     renderSuggestions(suggestions);
 
     const createBtn = document.getElementById('createBtn');
-    createBtn.addEventListener('click', async () => {
+    createBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
       if (!accessToken) {
         setStatus('Please log in to Spotify first. <button onclick="document.getElementById(\'loginBtn\').style.display=\'inline-block\';document.getElementById(\'loginBtn\').click();" style="margin-left:10px;padding:8px 12px;background:#6a3093;color:white;border:none;border-radius:5px;cursor:pointer;">Log in Now</button>');
         document.getElementById('loginBtn').style.display = 'inline-block';
